@@ -46,14 +46,41 @@ rule quast:
     log: 
         "results/logs/quast/{sample}.log"
     shell:
-        "quast.py {params.quast} --threads {threads} -o {output} {input[0]}/scaffolds.fasta {input[1]} 2> {log}"
+        "quast.py {params.quast} --threads {threads} -l spades,skesa -o {output} {input[0]}/scaffolds.fasta {input[1]} 2> {log}"
 
 rule check_best_assembly:
     input: 
-        "results/quast_{sample}"
+        spades="results/spades_{sample}/scaffolds.fasta",
+        skesa="results/skesa_{sample}/contigs.fasta",
+        quast="results/quast_{sample}"
     output: 
-        directory("results/best_assembly_{sample}")
-    log: 
-        "results/logs/quast/{sample}.log"
+        "results/best_assembly_{sample}/final_assembly.fa"
     run:
-        print("")
+        import pandas as pd
+        from shutil import copyfile
+
+        quast = pd.read_csv(f"{snakemake.input.quast}/report.tsv", sep="\t", header=0).set_index("Assembly", drop=False)
+        quast.drop('Assembly', axis='columns', inplace=True)
+
+        score = { i : 0 for i in quast.columns.to_list() }
+        number_contigs = quast.loc['# contigs']
+        largest_contig = quast.loc['Largest contig']
+        total_length = quast.loc['Total length']
+        n50 = quast.loc['N50']
+        n75 = quast.loc['N75']
+        predict_genes = quast.loc['# predicted genes (unique)']
+
+        score[min(number_contigs, key=number_contigs.get)] += 1
+        score[max(largest_contig, key=largest_contig.get)] += 1
+        score[max(total_length, key=total_length.get)] += 1
+        score[max(n50, key=n50.get)] += 1
+        score[max(n75, key=n75.get)] += 1
+        score[max(predict_genes, key=predict_genes.get)] += 3
+
+        assembly = max(score, key=score.get)
+
+        if assembly == 'spades':
+            copyfile(f'snakemake.input.spades', f'snakemake.output[0]') 
+        elif assembly == 'skesa':
+            copyfile(f'snakemake.input.skesa', f'snakemake.output[0]') 
+

@@ -1,14 +1,12 @@
 rule quast:
     input: 
-        "results/spades_{sample}"
+        "results/best_assembly_{sample}/final_assembly.fa"
     output: 
-        directory("results/quast_{sample}")
+        directory("results/prokka_{sample}")
     conda:
-        "../envs/assembly.yaml"
+        "../envs/annotation.yaml"
     threads: threads
-    params:
-        **config["params"]
     log: 
-        "results/logs/quast/{sample}.log"
+        "results/logs/prokka/{sample}.log"
     shell:
-        "python quast.py {params.quast} --threads {threads} -o {output} {input}/scaffolds.fasta 2> {log}"
+        "prokka --outdir {output} --prefix wildcards.sample {input}/scaffolds.fasta 2> {log}"

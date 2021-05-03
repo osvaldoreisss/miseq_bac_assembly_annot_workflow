@@ -1,0 +1,23 @@
+# The main entry point of your workflow.
+# After configuring, running snakemake -n in a clone of this repository should successfully execute a dry-run of the workflow.
+
+
+report: "report/workflow.rst"
+
+# Allow users to fix the underlying OS via singularity.
+singularity: "docker://continuumio/miniconda3"
+
+include: "rules/common.smk"
+
+rule all:
+    input:
+        expand("results/quast_{sample}", sample=samples['sample'])
+        #expand("results/quality_analysis/{sample}", sample=samples['sample']),
+        #expand("results/quality_analysis/{sample}/{sample}_val_1.fq.gz", sample=samples['sample']),
+        #expand("results/quality_analysis/{sample}/{sample}_val_2.fq.gz", sample=samples['sample'])
+        # The first rule should define the default target files
+        # Subsequent target rules can be specified below. They should start with all_*.
+
+
+include: "rules/quality.smk"
+include: "rules/assembly.smk"

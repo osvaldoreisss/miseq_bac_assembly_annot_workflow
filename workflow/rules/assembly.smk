@@ -57,7 +57,7 @@ rule check_best_assembly:
         "results/best_assembly_{sample}/final_assembly.fa"
     run:
         import pandas as pd
-        from shutil import copyfile
+        from shutil import copy
 
         quast = pd.read_csv(f"{input.quast}/report.tsv", sep="\t", header=0).set_index("Assembly", drop=False)
         quast.drop('Assembly', axis='columns', inplace=True)

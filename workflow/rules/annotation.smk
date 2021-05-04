@@ -1,4 +1,4 @@
-rule quast:
+rule prokka:
     input: 
         "results/best_assembly_{sample}/final_assembly.fa"
     output: 
@@ -9,4 +9,4 @@ rule quast:
     log: 
         "results/logs/prokka/{sample}.log"
     shell:
-        "prokka --outdir {output} --prefix wildcards.sample {input}/scaffolds.fasta 2> {log}"
+        "prokka --outdir {output} --prefix {wildcards.sample} {input}/scaffolds.fasta 2> {log}"

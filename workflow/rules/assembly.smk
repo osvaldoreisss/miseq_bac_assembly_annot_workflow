@@ -59,16 +59,16 @@ rule check_best_assembly:
         import pandas as pd
         from shutil import copyfile
 
-        quast = pd.read_csv(f"{snakemake.input.quast}/report.tsv", sep="\t", header=0).set_index("Assembly", drop=False)
+        quast = pd.read_csv(f"{input.quast}/report.tsv", sep="\t", header=0).set_index("Assembly", drop=False)
         quast.drop('Assembly', axis='columns', inplace=True)
 
         score = { i : 0 for i in quast.columns.to_list() }
-        number_contigs = quast.loc['# contigs']
-        largest_contig = quast.loc['Largest contig']
-        total_length = quast.loc['Total length']
-        n50 = quast.loc['N50']
-        n75 = quast.loc['N75']
-        predict_genes = quast.loc['# predicted genes (unique)']
+        number_contigs = quast.loc['# contigs'].to_dict()
+        largest_contig = quast.loc['Largest contig'].to_dict()
+        total_length = quast.loc['Total length'].to_dict()
+        n50 = quast.loc['N50'].to_dict()
+        n75 = quast.loc['N75'].to_dict()
+        predict_genes = quast.loc['# predicted genes (unique)'].to_dict()
 
         score[min(number_contigs, key=number_contigs.get)] += 1
         score[max(largest_contig, key=largest_contig.get)] += 1
@@ -79,8 +79,10 @@ rule check_best_assembly:
 
         assembly = max(score, key=score.get)
 
+        print(score)
+
         if assembly == 'spades':
-            copyfile(f'snakemake.input.spades', f'snakemake.output[0]') 
+            copy(f'{input.spades}', f'{output[0]}') 
         elif assembly == 'skesa':
-            copyfile(f'snakemake.input.skesa', f'snakemake.output[0]') 
+            copy(f'{input.skesa}', f'{output[0]}') 
 

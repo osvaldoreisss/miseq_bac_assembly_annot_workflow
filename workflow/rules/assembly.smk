@@ -37,7 +37,7 @@ rule skesa_assembly:
     shell:
         """
         skesa {params.skesa} --cores {threads} --reads {input.fq1},{input.fq2} --contigs_out {output[0]} 2> {log}
-        seqkit seq {params.seqkit} {output} > {output[1]}
+        seqkit seq {params.seqkit} {output[0]} > {output[1]}
         """
 
 rule quast:

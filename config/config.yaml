@@ -25,6 +25,18 @@ params:
         - "--glimmer"
         - "--rna-finding"
         - "--conserved-genes-finding"
+    seqkit:
+        - "--min-len 1000"
+        - "-g"
+    skesa:
+        - "--memory 120"
+        - "--hash_count"
+        - "--steps 53"
+    prokka:
+        - "--addgenes"
+        - "--centre LaCTAD"
+        - "--mincontiglen 1000"
+        - "--rfam"
 
 
    

@@ -4,7 +4,8 @@ rule spades_assembly:
         fq1="results/quality_analysis/{sample}/{sample}_R1_val_1.fq.gz",
         fq2="results/quality_analysis/{sample}/{sample}_R2_val_2.fq.gz"
     output: 
-        directory("results/spades_{sample}")
+        directory("results/spades_{sample}"),
+        "results/spades_{sample}/scaffolds.filtered.fasta"
     conda:
         "../envs/assembly.yaml"
     threads: threads
@@ -13,7 +14,10 @@ rule spades_assembly:
     log: 
         "results/logs/spades_assembly/{sample}.log"
     shell:
-        "spades.py {params.spades} --threads {threads} -1 {input.fq1} -2 {input.fq2} -o {output} 2> {log}"
+        """
+        spades.py {params.spades} --threads {threads} -1 {input.fq1} -2 {input.fq2} -o {output[0]} 2> {log}
+        seqkit seq {params.seqkit} {output[0]}/scaffolds.fasta > {output[1]}
+        """
 
 rule skesa_assembly:
     input: 
@@ -21,7 +25,8 @@ rule skesa_assembly:
         fq1="results/quality_analysis/{sample}/{sample}_R1_val_1.fq.gz",
         fq2="results/quality_analysis/{sample}/{sample}_R2_val_2.fq.gz"
     output: 
-        "results/skesa_{sample}/contigs.fasta"
+        "results/skesa_{sample}/contigs.fasta",
+        "results/skesa_{sample}/contigs.filtered.fasta"
     conda:
         "../envs/assembly.yaml"
     threads: threads
@@ -30,12 +35,15 @@ rule skesa_assembly:
     log: 
         "results/logs/skesa_assembly/{sample}.log"
     shell:
-        "skesa --cores {threads} --reads {input.fq1},{input.fq2} --contigs_out {output} 2> {log}"
+        """
+        skesa {params.skesa} --cores {threads} --reads {input.fq1},{input.fq2} --contigs_out {output[0]} 2> {log}
+        seqkit seq {params.seqkit} {output} > {output[1]}
+        """
 
 rule quast:
     input: 
-        "results/spades_{sample}",
-        "results/skesa_{sample}/contigs.fasta"
+        "results/spades_{sample}/scaffolds.filtered.fasta",
+        "results/skesa_{sample}/contigs.filtered.fasta"
     output: 
         directory("results/quast_{sample}")
     conda:
@@ -46,7 +54,7 @@ rule quast:
     log: 
         "results/logs/quast/{sample}.log"
     shell:
-        "quast.py {params.quast} --threads {threads} -l spades,skesa -o {output} {input[0]}/scaffolds.fasta {input[1]} 2> {log}"
+        "quast.py {params.quast} --threads {threads} -l spades,skesa -o {output} {input[0]} {input[1]} 2> {log}"
 
 rule check_best_assembly:
     input: 

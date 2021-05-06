@@ -37,6 +37,5 @@ params:
         - "--centre LaCTAD"
         - "--mincontiglen 1000"
         - "--rfam"
-        - "--proteins "
 
    

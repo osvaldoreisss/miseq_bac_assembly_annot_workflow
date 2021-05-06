@@ -58,8 +58,8 @@ rule quast:
 
 rule check_best_assembly:
     input: 
-        spades="results/spades_{sample}",
-        skesa="results/skesa_{sample}/contigs.fasta",
+        spades="results/spades_{sample}/scaffolds.filtered.fasta"",
+        skesa="results/skesa_{sample}/contigs.filtered.fasta",
         quast="results/quast_{sample}"
     output: 
         "results/best_assembly_{sample}/final_assembly.fa"
@@ -90,7 +90,7 @@ rule check_best_assembly:
         print(score)
 
         if assembly == 'spades':
-            copy(f'{input.spades}/scaffolds.fasta', f'{output[0]}') 
+            copy(f'{input.spades}', f'{output[0]}') 
         elif assembly == 'skesa':
             copy(f'{input.skesa}', f'{output[0]}') 
 

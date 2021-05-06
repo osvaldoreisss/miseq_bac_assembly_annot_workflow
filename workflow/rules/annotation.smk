@@ -11,4 +11,4 @@ rule prokka:
     log: 
         "results/logs/prokka/{sample}.log"
     shell:
-        "prokka {params.prokka} ---cpus {threads} -outdir {output} --prefix {wildcards.sample} {input} 2> {log}"
+        "prokka {params.prokka} --cpus {threads} --outdir {output} --prefix {wildcards.sample} {input} 2> {log}"

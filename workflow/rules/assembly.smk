@@ -58,7 +58,7 @@ rule quast:
 
 rule check_best_assembly:
     input: 
-        spades="results/spades_{sample}/scaffolds.filtered.fasta"",
+        spades="results/spades_{sample}/scaffolds.filtered.fasta",
         skesa="results/skesa_{sample}/contigs.filtered.fasta",
         quast="results/quast_{sample}"
     output: 

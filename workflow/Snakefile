@@ -13,7 +13,7 @@ rule all:
     input:
         #expand("results/quast_{sample}", sample=samples['sample'])
         expand("results/prokka_{sample}", sample=samples['sample']),
-        expand("results/busco_{sample}", sample=samples['sammple'])
+        expand("results/busco_{sample}", sample=samples['sample'])
         #expand("results/quality_analysis/{sample}", sample=samples['sample']),
         #expand("results/quality_analysis/{sample}/{sample}_val_1.fq.gz", sample=samples['sample']),
         #expand("results/quality_analysis/{sample}/{sample}_val_2.fq.gz", sample=samples['sample'])

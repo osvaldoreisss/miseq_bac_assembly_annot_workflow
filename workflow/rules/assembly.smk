@@ -100,7 +100,7 @@ rule busco:
     output: 
         directory("results/busco_{sample}")
     conda:
-        "../envs/assembly_quality.yaml"
+        "../envs/busco.yaml"
     threads: threads
     params:
         **config["params"]

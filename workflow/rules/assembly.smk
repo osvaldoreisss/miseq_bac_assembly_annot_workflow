@@ -107,4 +107,4 @@ rule busco:
     log: 
         "results/logs/busco/{sample}.log"
     shell:
-        "busco {params.busco} --cpu {threads} -i {input} -o {output}  2> {log}"
+        "busco {params.busco} --cpu {threads} -i {input} --out_path $(dirname {output}) -o $(basename {output}) 2> {log}"

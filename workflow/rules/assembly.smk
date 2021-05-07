@@ -94,3 +94,17 @@ rule check_best_assembly:
         elif assembly == 'skesa':
             copy(f'{input.skesa}', f'{output[0]}') 
 
+rule busco:
+    input: 
+        "results/best_assembly_{sample}/final_assembly.fa"
+    output: 
+        directory("results/busco_{sample}")
+    conda:
+        "../envs/assembly_quality.yaml"
+    threads: threads
+    params:
+        **config["params"]
+    log: 
+        "results/logs/busco/{sample}.log"
+    shell:
+        "busco {params.busco} --cpu {threads} -i {input} -o {output}  2> {log}"
